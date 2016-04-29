@@ -1,5 +1,6 @@
 package com.grishberg.dailyselfie.data.files;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
@@ -7,7 +8,6 @@ import android.os.Message;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
-import com.grishberg.dailyselfie.data.db.BaseResult;
 import com.grishberg.dailyselfie.data.db.dao.PictureDao;
 
 import java.util.concurrent.BlockingQueue;
@@ -43,7 +43,7 @@ public class PictureManager implements Runnable {
     private final PictureDao pictureDao;
     private final LruCache<String, Bitmap> bitmapCache;
 
-    public PictureManager(PictureDao pictureDao) {
+    public PictureManager(final PictureDao pictureDao) {
         this.pictureDao = pictureDao;
         int cacheSize = 50 * 1024 * 1024; // 4MiB
         bitmapCache = new LruCache<String, Bitmap>(cacheSize) {
@@ -63,12 +63,33 @@ public class PictureManager implements Runnable {
         handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message inputMessage) {
-                // Gets the image task from the incoming Message object.
                 PictureTask pictureTask = (PictureTask) inputMessage.obj;
                 DecodeCompleteListener listener = pictureTask.getDecodeListener();
-                bitmapCache.put(pictureTask.getPath(), pictureTask.getBitmap());
-                if (listener != null) {
-                    listener.onCompleted(pictureTask.getBitmap(), pictureTask.getPath());
+                StoreCompleteListener storeCompleteListener = pictureTask.getStoreListener();
+
+                switch (inputMessage.what) {
+                    case DECODE_COMPLETED:
+                        Log.d(TAG, "handleMessage: DECODE_COMPLETED");
+                        // Gets the image task from the incoming Message object.
+                        bitmapCache.put(pictureTask.getPath(), pictureTask.getBitmap());
+                        if (listener != null) {
+                            listener.onCompleted(pictureTask.getBitmap(), pictureTask.getPath());
+                        }
+                        break;
+                    case STORE_COMPLETED:
+                        Log.d(TAG, "handleMessage: STORE_COMPLETED");
+                        storeCompleteListener = pictureTask.getStoreListener();
+                        if (storeCompleteListener != null) {
+                            storeCompleteListener.onCompleted(pictureTask.getPath());
+                        }
+                        break;
+                    case STORE_FAIL:
+                        Log.e(TAG, String.format("handleMessage: STORE_FAIL msg = %s",
+                                pictureTask.getErrorMessage()));
+                        if (storeCompleteListener != null) {
+                            storeCompleteListener.onFail(pictureTask.getErrorMessage());
+                        }
+                        break;
                 }
             }
         };
@@ -79,14 +100,10 @@ public class PictureManager implements Runnable {
      *
      * @param src
      */
-    public void storePicture(Bitmap src, StoreCompleteListener listener) {
-        StoreRunnable runnable = new StoreRunnable(handler, src, pictureDao, listener);
+    public void storePicture(Context context, Bitmap src, StoreCompleteListener listener) {
+        Log.d(TAG, "storePicture: ");
+        StoreRunnable runnable = new StoreRunnable(context, handler, src, pictureDao, listener);
         decodeThreadPool.execute(runnable);
-    }
-
-    private String storePictureToFile(Bitmap src) {
-        String path = null;
-        return path;
     }
 
     /**
@@ -144,5 +161,7 @@ public class PictureManager implements Runnable {
 
     public interface StoreCompleteListener {
         void onCompleted(String path);
+
+        void onFail(String path);
     }
 }

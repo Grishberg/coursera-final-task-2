@@ -2,7 +2,6 @@ package com.grishberg.dailyselfie.controllers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,7 +16,7 @@ import android.widget.TextView;
 
 import com.grishberg.dailyselfie.R;
 import com.grishberg.dailyselfie.common.interfaces.OnItemClickListener;
-import com.grishberg.dailyselfie.data.db.ListResult;
+import com.grishberg.dailyselfie.common.db.ListResult;
 import com.grishberg.dailyselfie.data.files.PictureManager;
 import com.grishberg.dailyselfie.data.model.Pictures;
 
@@ -56,10 +55,23 @@ public class PicturesAdapter extends BaseRecyclerAdapter<Pictures, PicturesAdapt
 
         holder.tvDate.setText(String.format(Locale.US, "dd.MM.yyyy HH.mm.ss",new Date(item.getLastupdate())));
         holder.id = item.getId();
-        pictureManager.loadPicture(holder, item);
+        holder.path = item.getPath();
+        loadPicture(holder);
         setAnimation(holder.container, position);
 
         holder.clickListener = listener;
+    }
+
+    private void loadPicture(final PictureViewHolder holder) {
+        pictureManager.loadPicture(holder.path, new PictureManager.DecodeCompleteListener() {
+            @Override
+            public void onCompleted(Bitmap bitmap, String path) {
+                if(holder.path.equals(path)){
+                    holder.ivPreviewIcon.setImageBitmap(bitmap);
+                    //TODO start animation
+                }
+            }
+        });
     }
 
     @Override
@@ -80,6 +92,7 @@ public class PicturesAdapter extends BaseRecyclerAdapter<Pictures, PicturesAdapt
 
     public static class PictureViewHolder extends RecyclerView.ViewHolder {
         long id;
+        String path;
         View container;
         public ImageView ivPreviewIcon;
         TextView tvDate;

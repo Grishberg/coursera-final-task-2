@@ -5,20 +5,24 @@ import android.graphics.Bitmap;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.grishberg.dailyselfie.App;
 import com.grishberg.dailyselfie.R;
 import com.grishberg.dailyselfie.data.db.dao.PictureDaoCursor;
 import com.grishberg.dailyselfie.data.files.PictureManager;
 
 public class MainActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     private PictureManager pictureManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pictureManager = new PictureManager(new PictureDaoCursor());
+        pictureManager = new PictureManager(new PictureDaoCursor(getApplicationContext()));
     }
 
     private void dispatchTakePictureIntent() {
@@ -33,7 +37,17 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            pictureManager.storePicture(imageBitmap);
+            pictureManager.storePicture(App.getAppContext(), imageBitmap, new PictureManager.StoreCompleteListener() {
+                @Override
+                public void onCompleted(String path) {
+                    //TODO: update recycler view
+                }
+
+                @Override
+                public void onFail(String path) {
+                    Log.e(TAG, "onFail: " + path);
+                }
+            });
             //mImageView.setImageBitmap(imageBitmap);
         }
     }

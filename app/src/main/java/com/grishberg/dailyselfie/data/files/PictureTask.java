@@ -12,6 +12,7 @@ public class PictureTask {
     private String path;
     private PictureManager.DecodeCompleteListener decodeListener;
     private PictureManager.StoreCompleteListener storeListener;
+    private String errorMessage;
 
     public void setPicture(Bitmap picture) {
         this.bitmap = picture;
@@ -47,5 +48,13 @@ public class PictureTask {
 
     public String getPath() {
         return path;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

@@ -6,8 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-import com.grishberg.dailyselfie.data.db.DataReceiveObserver;
-import com.grishberg.dailyselfie.data.db.ListResult;
+import com.grishberg.dailyselfie.common.db.DataReceiveObserver;
+import com.grishberg.dailyselfie.common.db.ListResult;
 
 /**
  * Created by grishberg on 28.04.16.

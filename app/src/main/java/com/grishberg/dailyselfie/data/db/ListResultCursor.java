@@ -2,6 +2,9 @@ package com.grishberg.dailyselfie.data.db;
 
 import android.database.Cursor;
 
+import com.grishberg.dailyselfie.common.db.DataReceiveObserver;
+import com.grishberg.dailyselfie.common.db.ListResult;
+
 /**
  * Created by grishberg on 28.04.16.
  */

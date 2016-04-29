@@ -1,12 +1,12 @@
 package com.grishberg.dailyselfie.data.files;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.grishberg.dailyselfie.App;
 import com.grishberg.dailyselfie.data.db.dao.PictureDao;
 
 import java.io.File;
@@ -23,13 +23,15 @@ import java.util.Locale;
 public class StoreRunnable extends BaseRunnable {
     private static final String TAG = StoreRunnable.class.getSimpleName();
     public static final String ANDROID_DATA = "/Android/data/";
-    public static final String FILES = "/Files";
+    public static final String FILES = "files";
     private final PictureManager.StoreCompleteListener listener;
     private final Bitmap bitmap;
     private final PictureDao pictureDao;
+    private final Context context;
 
-    public StoreRunnable(Handler handler, Bitmap bitmap, PictureDao pictureDao, PictureManager.StoreCompleteListener listener) {
+    public StoreRunnable(Context context, Handler handler, Bitmap bitmap, PictureDao pictureDao, PictureManager.StoreCompleteListener listener) {
         super(handler);
+        this.context = context;
         this.listener = listener;
         this.bitmap = bitmap;
         this.pictureDao = pictureDao;
@@ -38,6 +40,7 @@ public class StoreRunnable extends BaseRunnable {
     @Override
     public void run() {
         thread = Thread.currentThread();
+        Log.d(TAG, "run: " + thread.toString());
         PictureTask pictureTask = new PictureTask();
         pictureTask.setStoreListener(listener);
 
@@ -45,6 +48,7 @@ public class StoreRunnable extends BaseRunnable {
         if (pictureFile == null) {
             Log.e(TAG,
                     "Error creating media file, check storage permissions: ");// e.getMessage());
+            pictureTask.setErrorMessage("Error creating media file, check storage permissions: ");
             sendMessage(PictureManager.STORE_FAIL, pictureTask);
             return;
         }
@@ -61,8 +65,10 @@ public class StoreRunnable extends BaseRunnable {
             return;
         } catch (FileNotFoundException e) {
             Log.e(TAG, "File not found: ", e);
+            pictureTask.setErrorMessage(e.getMessage());
         } catch (IOException e) {
             Log.e(TAG, "Error accessing file: ", e);
+            pictureTask.setErrorMessage(e.getMessage());
         }
         sendMessage(PictureManager.STORE_FAIL, pictureTask);
         Message completeMessage =
@@ -86,16 +92,21 @@ public class StoreRunnable extends BaseRunnable {
      * Create a File for saving an image
      */
     private File getOutputMediaFile() {
+        File mediaStorageDir = null;
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
-        File mediaStorageDir = new File(
-                Environment.getExternalStorageDirectory()
-                        + ANDROID_DATA
-                        + App.getAppContext().getPackageName()
-                        + FILES);
+        if (Environment.MEDIA_MOUNTED.equals(Environment
+                .getExternalStorageState())) {
 
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
+            mediaStorageDir = new File(
+                    Environment.getExternalStorageDirectory()
+                            + ANDROID_DATA
+                            + context.getPackageName()
+                            + File.separator
+                            + FILES);
+        } else {
+            mediaStorageDir = new File(FILES);
+        }
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
@@ -104,7 +115,7 @@ public class StoreRunnable extends BaseRunnable {
             }
         }
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm", Locale.US)
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss", Locale.US)
                 .format(new Date());
         File mediaFile;
         String imageName = "MI_" + timeStamp + ".jpg";
