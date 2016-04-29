@@ -40,12 +40,12 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         AppContentProvider contentProvider = new AppContentProvider();
         ProviderInfo providerInfo = new ProviderInfo();
         providerInfo.authority = AppContentProvider.AUTHORITY;
-        contentProvider.attachInfo(getContext(), providerInfo);
-        contentProvider.onCreate();
         mockResolver = new MockContentResolver();
         mockResolver.addProvider(AppContentProvider.AUTHORITY, contentProvider);
         mockContext = new ContextWithMockContentResolver(super.getContext());
         mockContext.setContentResolver(mockResolver);
+        contentProvider.attachInfo(getContext(), providerInfo);
+        contentProvider.onCreate();
         pictureDao = new PictureDaoCursor(getContext());
 
     }
