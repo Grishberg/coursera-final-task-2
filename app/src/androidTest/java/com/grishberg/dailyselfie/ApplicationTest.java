@@ -1,8 +1,10 @@
 package com.grishberg.dailyselfie;
 
 import android.app.Application;
+import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.ProviderInfo;
 import android.graphics.Bitmap;
 import android.test.ApplicationTestCase;
 import android.test.RenamingDelegatingContext;
@@ -27,6 +29,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     private boolean success;
     MockContentResolver mockResolver;
     PictureDao pictureDao;
+    ContextWithMockContentResolver mockContext;
 
     public ApplicationTest() {
         super(Application.class);
@@ -35,10 +38,13 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     @Override
     public void setUp() {
         AppContentProvider contentProvider = new AppContentProvider();
-        contentProvider.attachInfo(getContext(), null);
+        ProviderInfo providerInfo = new ProviderInfo();
+        providerInfo.authority = AppContentProvider.AUTHORITY;
+        contentProvider.attachInfo(getContext(), providerInfo);
+        contentProvider.onCreate();
         mockResolver = new MockContentResolver();
         mockResolver.addProvider(AppContentProvider.AUTHORITY, contentProvider);
-        ContextWithMockContentResolver mockContext = new ContextWithMockContentResolver(super.getContext());
+        mockContext = new ContextWithMockContentResolver(super.getContext());
         mockContext.setContentResolver(mockResolver);
         pictureDao = new PictureDaoCursor(getContext());
 
@@ -83,5 +89,10 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         @Override public Context getApplicationContext(){
             return this;
         } //Added in-case my class called getApplicationContext()
+    }
+
+    @Override
+    public Context getContext() {
+        return mockContext;
     }
 }
