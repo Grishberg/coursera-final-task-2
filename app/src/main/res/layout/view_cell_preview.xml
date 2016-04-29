@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                                    xmlns:tools="http://schemas.android.com/tools"
+                                    android:id="@+id/cvRoot"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/feed_cell_height"
+                                    android:layout_margin="4dp"
+                                    card_view:cardCornerRadius="4dp"
+                                    card_view:cardElevation="4dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!-- date header -->
+        <FrameLayout
+            android:id="@+id/vNewDateContainer"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/date_header">
+            <TextView
+                android:id="@+id/tvNewDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </FrameLayout>
+
+        <!-- image block -->
+        <LinearLayout android:orientation="horizontal"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent">
+            <!-- preview image -->
+            <ImageView
+                android:id="@+id/ivPreviewIcon"
+                android:layout_margin="8dp"
+                android:layout_width="@dimen/feed_image_width"
+                android:layout_height="@dimen/feed_image_height"
+                />
+            <!-- date title -->
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>
