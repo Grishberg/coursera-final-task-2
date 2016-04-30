@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.grishberg.dailyselfie"
           xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-feature android:name="android.hardware.camera"
-                  android:required="true" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-                     android:required="true"/>
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true"/>
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:required="true"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -22,8 +27,14 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".controllers.AlarmNotificationReceiver" >
+        <receiver android:name=".controllers.AlarmNotificationReceiver">
         </receiver>
+
+        <activity
+            android:name=".ui.activities.DetailActivity"
+            android:label="@string/title_activity_detail"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

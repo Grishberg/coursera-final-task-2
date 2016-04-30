@@ -15,7 +15,7 @@ public class App extends Application {
     public void onCreate() {
         Log.d(TAG, "onCreate: DailySelfie");
         super.onCreate();
-        sAppContext = getAppContext();
+        sAppContext = getApplicationContext();
     }
 
     public static Context getAppContext() {

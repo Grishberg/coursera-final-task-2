@@ -5,13 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.grishberg.dailyselfie.App;
+import com.grishberg.dailyselfie.common.db.SingleResult;
 import com.grishberg.dailyselfie.data.db.AppContentProvider;
 import com.grishberg.dailyselfie.data.db.DbHelper;
 import com.grishberg.dailyselfie.common.db.ListResult;
 import com.grishberg.dailyselfie.data.db.ListResultCursor;
+import com.grishberg.dailyselfie.data.db.SingleResultCursor;
 import com.grishberg.dailyselfie.data.model.Pictures;
 
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by grishberg on 28.04.16.
@@ -37,13 +40,21 @@ public class PictureDaoCursor implements PictureDao {
     @Override
     public ListResult<Pictures> getPictures() {
         // 1) retrive categories ID  from DB
-        try (Cursor cursor = context.getContentResolver()
-                .query(AppContentProvider.CONTENT_URI_PICTURES
-                        , new String[]{DbHelper.COLUMN_ID}
-                        , null
-                        , null
-                        , null)) {
-            return new ListResultCursor<>(cursor, Pictures.class);
-        }
+        return new ListResultCursor<>(context, Pictures.class,
+                AppContentProvider.CONTENT_URI_PICTURES,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public SingleResult<Pictures> getPicture(long id) {
+        return new SingleResultCursor<>(context, Pictures.class,
+                AppContentProvider.CONTENT_URI_PICTURES,
+                null,
+                "id = ?",
+                new String[]{ String.format(Locale.US, "%d",id) },
+                null);
     }
 }

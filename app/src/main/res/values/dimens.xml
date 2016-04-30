@@ -6,4 +6,5 @@
     <dimen name="feed_image_height">100dp</dimen>
     <dimen name="date_header">30dp</dimen>
     <dimen name="feed_cell_height">116dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>
