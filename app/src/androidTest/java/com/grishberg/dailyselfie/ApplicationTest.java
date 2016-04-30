@@ -53,7 +53,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
         final CountDownLatch signal = new CountDownLatch(1);
         success = false;
-        PictureManager pictureManager = new PictureManager(pictureDao);
+        PictureManager pictureManager = PictureManager.getInstance();
         Bitmap testBitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.RGB_565);
         pictureManager.storePicture(getContext(), testBitmap, new PictureManager.StoreCompleteListener() {
             @Override
@@ -81,7 +81,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
         final CountDownLatch signal = new CountDownLatch(1);
         success = false;
-        PictureManager pictureManager = new PictureManager(pictureDao);
+        PictureManager pictureManager = PictureManager.getInstance();
         pictureManager.loadPicture(path, new PictureManager.DecodeCompleteListener() {
             @Override
             public void onCompleted(Bitmap bitmap, String path) {

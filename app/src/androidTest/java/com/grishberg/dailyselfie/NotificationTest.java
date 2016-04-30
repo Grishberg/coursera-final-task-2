@@ -43,7 +43,7 @@ public class NotificationTest extends ActivityInstrumentationTestCase2<MainActiv
 
     public void testAlarmReceive() throws Exception {
         AlarmNotificationReceiver receiver = new AlarmNotificationReceiver();
-        AlarmHelper.makeAlarm(getActivity().getApplicationContext(),200);
+        AlarmHelper.getsInstance().makeAlarm(getActivity().getApplicationContext(),200);
         assertTrue("Alarm not received", solo.waitForLogMessage("onReceive: Alarm", 500));
         assertNull(receiver.getResultData());
     }
