@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">DailySelfie</string>
+    <string name="selfy_time">Selfy time!</string>
+    <string name="selfy_time_title">Time to make selfy</string>
+    <string name="selfy_time_content">click me to enter to the app</string>
 </resources>

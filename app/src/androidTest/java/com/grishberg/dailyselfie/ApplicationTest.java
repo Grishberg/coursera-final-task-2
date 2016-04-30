@@ -1,7 +1,6 @@
 package com.grishberg.dailyselfie;
 
 import android.app.Application;
-import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ProviderInfo;
@@ -102,6 +101,8 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         signal.await(TIMEOUT, TimeUnit.SECONDS);
         assertTrue("picture was not loaded", success);
     }
+
+    //----------------------------------- setup test -------------------------------------
 
     public static class ContextWithMockContentResolver extends RenamingDelegatingContext {
         private ContentResolver contentResolver;
