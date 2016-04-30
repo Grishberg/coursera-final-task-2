@@ -17,6 +17,7 @@ import com.grishberg.dailyselfie.R;
 import com.grishberg.dailyselfie.common.db.DataStoreObserver;
 import com.grishberg.dailyselfie.common.db.ListResult;
 import com.grishberg.dailyselfie.common.interfaces.OnItemClickListener;
+import com.grishberg.dailyselfie.controllers.AlarmHelper;
 import com.grishberg.dailyselfie.controllers.PicturesAdapter;
 import com.grishberg.dailyselfie.data.db.ListResultCursor;
 import com.grishberg.dailyselfie.data.db.dao.PictureDao;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final String PHOTO_ID = "PHOTO_ID";
+    public static final int NOTIFICATION_INTERVAL = 1000 * 60;
 
     private PictureManager pictureManager;
     private RecyclerView recyclerView;
@@ -51,11 +53,13 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 pictureManager,
                 this);
         recyclerView.setAdapter(adapter);
+        AlarmHelper.getsInstance().cancelAlarm();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        AlarmHelper.getsInstance().makeAlarm(getApplicationContext(), NOTIFICATION_INTERVAL);
         if (resultCursor != null) {
             resultCursor.release();
         }

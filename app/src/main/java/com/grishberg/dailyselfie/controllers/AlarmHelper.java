@@ -11,8 +11,22 @@ import android.content.Intent;
 public class AlarmHelper {
     private static final String TAG = AlarmHelper.class.getSimpleName();
     private static final long INITIAL_ALARM_DELAY = 1000 * 60;
+    private AlarmManager alarmManager;
+    PendingIntent notificationReceiverPendingIntent;
+    private static AlarmHelper sInstance;
 
-    public static void makeAlarm(Context context , long delay){
+    public static AlarmHelper getsInstance() {
+        if (sInstance == null) {
+            sInstance = new AlarmHelper();
+        }
+        return sInstance;
+    }
+
+    private AlarmHelper() {
+
+    }
+
+    public void makeAlarm(Context context, long delay) {
         // Get the AlarmManager Service
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -21,13 +35,19 @@ public class AlarmHelper {
                 AlarmNotificationReceiver.class);
 
         // Create an PendingIntent that holds the NotificationReceiverIntent
-        PendingIntent notificationReceiverPendingIntent = PendingIntent.getBroadcast(
+        notificationReceiverPendingIntent = PendingIntent.getBroadcast(
                 context, 0, notificationReceiverIntent, 0);
 
         // Set single alarm
         alarmManager.set(AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + delay,
                 notificationReceiverPendingIntent);
+    }
 
+    public void cancelAlarm() {
+        // Cancel all alarms using mNotificationReceiverPendingIntent
+        if (alarmManager != null && notificationReceiverPendingIntent != null) {
+            alarmManager.cancel(notificationReceiverPendingIntent);
+        }
     }
 }

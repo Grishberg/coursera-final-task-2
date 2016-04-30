@@ -18,6 +18,7 @@ import com.grishberg.dailyselfie.R;
 import com.grishberg.dailyselfie.common.db.DataReceiveObserver;
 import com.grishberg.dailyselfie.common.db.ListResult;
 import com.grishberg.dailyselfie.common.db.SingleResult;
+import com.grishberg.dailyselfie.controllers.AlarmHelper;
 import com.grishberg.dailyselfie.data.db.dao.PictureDao;
 import com.grishberg.dailyselfie.data.db.dao.PictureDaoCursor;
 import com.grishberg.dailyselfie.data.files.PictureManager;
@@ -51,6 +52,7 @@ public class DetailActivity extends AppCompatActivity
         pictureManager = PictureManager.getInstance();
         Intent intent = getIntent();
         populatePicture(intent);
+        AlarmHelper.getsInstance().cancelAlarm();
     }
 
     @Override
