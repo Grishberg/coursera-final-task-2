@@ -31,7 +31,7 @@ public class NotificationHelper {
         Notification.Builder notificationBuilder = new Notification.Builder(
                 context)
                 .setTicker(context.getText(R.string.selfy_time))
-                .setSmallIcon(R.drawable.ic_camera)
+                .setSmallIcon(R.drawable.ic_camera_32)
                 .setAutoCancel(true)
                 .setContentTitle(titleText)
                 .setContentText(contentText)
