@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.grishberg.dailyselfie.common.db.BaseResult;
 import com.grishberg.dailyselfie.common.db.DataReceiveObserver;
@@ -17,6 +18,7 @@ import java.util.List;
  * Created by grishberg on 30.04.16.
  */
 public class BaseResultCursor<T extends CursorModel<T>> implements BaseResult {
+    private static final String TAG = BaseResultCursor.class.getSimpleName();
     private final List<DataReceiveObserver> observers;
     protected final Context context;
     protected Cursor cursor;
@@ -52,6 +54,7 @@ public class BaseResultCursor<T extends CursorModel<T>> implements BaseResult {
         new AsyncTask<Void, Void, Cursor>() {
             @Override
             protected Cursor doInBackground(Void... params) {
+                Log.d(TAG, "doInBackground: start downloading data");
                 Cursor cursor = context.getContentResolver()
                         .query(uri, projection, selection, selectionArgs, sortOrder);
                 return cursor;
@@ -61,6 +64,7 @@ public class BaseResultCursor<T extends CursorModel<T>> implements BaseResult {
             protected void onPostExecute(Cursor cursor) {
                 BaseResultCursor.this.cursor = cursor;
                 if (cursor != null) {
+                    Log.d(TAG, "onPostExecute: data downloaded");
                     isLoaded = true;
                     // notify recepients
                     for (DataReceiveObserver observer : observers) {

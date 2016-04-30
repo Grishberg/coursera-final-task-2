@@ -1,12 +1,10 @@
 package com.grishberg.dailyselfie.data.db;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.grishberg.dailyselfie.common.db.DataReceiveObserver;
 import com.grishberg.dailyselfie.common.db.ListResult;
 
 /**
@@ -26,31 +24,40 @@ public class ListResultCursor<T extends CursorModel<T>> extends BaseResultCursor
                             @Nullable String sortOrder) {
         super(context, clazz, uri, projection, selection, selectionArgs, sortOrder);
     }
+
     @Override
     public T getItem(int index) {
         if (cursor == null || cursor.isClosed()) {
             return null;
         }
-        if (prevIndex - index == 1) {
+        if(index == 0 && cursor.moveToFirst()){
+            prevIndex = index;
+            return getValueFromCursor();
+        }
+        if (index - prevIndex == 1) {
             prevIndex = index;
             if (cursor.moveToNext()) {
-                getValueFromCursor();
+                return getValueFromCursor();
             }
         } else if (cursor.move(index)) {
             prevIndex = index;
-            getValueFromCursor();
+            return getValueFromCursor();
         }
         return null;
     }
 
     /**
      * extract values from cursor
+     *
      * @return
      */
     private T getValueFromCursor() {
+        if (cursor == null) {
+            return null;
+        }
         try {
             T result = clazz.newInstance();
-            return result.ftomCursor(cursor);
+            return result.getFromCursor(cursor);
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
@@ -59,7 +66,9 @@ public class ListResultCursor<T extends CursorModel<T>> extends BaseResultCursor
 
     @Override
     public int getCount() {
+        if (cursor == null) {
+            return 0;
+        }
         return cursor.getCount();
     }
-
 }

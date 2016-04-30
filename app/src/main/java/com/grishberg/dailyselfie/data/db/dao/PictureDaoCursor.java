@@ -1,10 +1,15 @@
 package com.grishberg.dailyselfie.data.db.dao;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 
 import com.grishberg.dailyselfie.App;
+import com.grishberg.dailyselfie.common.db.DataReceiveObserver;
+import com.grishberg.dailyselfie.common.db.DataStoreObserver;
 import com.grishberg.dailyselfie.common.db.SingleResult;
 import com.grishberg.dailyselfie.data.db.AppContentProvider;
 import com.grishberg.dailyselfie.data.db.DbHelper;
@@ -38,6 +43,29 @@ public class PictureDaoCursor implements PictureDao {
     }
 
     @Override
+    public void storePictureAsync(final String path, final DataStoreObserver callback) {
+        new AsyncTask<Void, Void, Long>() {
+            @Override
+            protected Long doInBackground(Void... params) {
+                ContentValues values = new ContentValues();
+                values.put(DbHelper.PICTURES_PATH, path);
+                values.put(DbHelper.PICTURES_LAST_UPDATE, new Date().getTime());
+                Uri uri = context.getContentResolver()
+                        .insert(AppContentProvider.CONTENT_URI_PICTURES,
+                                values);
+                return ContentUris.parseId(uri);
+            }
+
+            @Override
+            protected void onPostExecute(Long id) {
+                if (id != null && callback != null && !isCancelled()) {
+                    callback.onDataStored(id);
+                }
+            }
+        }.execute();
+    }
+
+    @Override
     public ListResult<Pictures> getPictures() {
         // 1) retrive categories ID  from DB
         return new ListResultCursor<>(context, Pictures.class,
@@ -54,7 +82,7 @@ public class PictureDaoCursor implements PictureDao {
                 AppContentProvider.CONTENT_URI_PICTURES,
                 null,
                 "id = ?",
-                new String[]{ String.format(Locale.US, "%d",id) },
+                new String[]{String.format(Locale.US, "%d", id)},
                 null);
     }
 }

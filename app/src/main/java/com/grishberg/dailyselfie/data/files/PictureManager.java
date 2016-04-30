@@ -40,11 +40,16 @@ public class PictureManager implements Runnable {
     private final ThreadPoolExecutor decodeThreadPool;
     private final Handler handler;
 
-    private final PictureDao pictureDao;
     private final LruCache<String, Bitmap> bitmapCache;
+    private static PictureManager sInstance;
 
-    public PictureManager(final PictureDao pictureDao) {
-        this.pictureDao = pictureDao;
+    public static PictureManager getInstance(){
+        if(sInstance == null){
+            sInstance = new PictureManager();
+        }
+        return sInstance;
+    }
+    private PictureManager() {
         int cacheSize = 50 * 1024 * 1024; // 4MiB
         bitmapCache = new LruCache<String, Bitmap>(cacheSize) {
             protected int sizeOf(String key, Bitmap value) {
@@ -102,7 +107,7 @@ public class PictureManager implements Runnable {
      */
     public void storePicture(Context context, Bitmap src, StoreCompleteListener listener) {
         Log.d(TAG, "storePicture: ");
-        StoreRunnable runnable = new StoreRunnable(context, handler, src, pictureDao, listener);
+        StoreRunnable runnable = new StoreRunnable(context, handler, src, listener);
         decodeThreadPool.execute(runnable);
     }
 

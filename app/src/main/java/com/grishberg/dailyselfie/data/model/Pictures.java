@@ -14,6 +14,10 @@ public class Pictures extends CursorModel<Pictures> {
     private String path;
     private long lastupdate;
 
+    // nessesary
+    public Pictures() {
+    }
+
     public Pictures(long id
             , String path
             , long lastupdate) {
@@ -23,7 +27,7 @@ public class Pictures extends CursorModel<Pictures> {
     }
 
     @Override
-    public Pictures ftomCursor(Cursor cur) {
+    public Pictures getFromCursor(Cursor cur) {
         return Pictures.fromCursor(cur);
     }
 

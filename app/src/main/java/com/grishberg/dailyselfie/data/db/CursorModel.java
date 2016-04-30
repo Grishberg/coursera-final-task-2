@@ -7,5 +7,5 @@ import android.database.Cursor;
  */
 public abstract class CursorModel<T> {
     private static final String TAG = CursorModel.class.getSimpleName();
-    public abstract T ftomCursor(Cursor cur);
+    public abstract T getFromCursor(Cursor cur);
 }

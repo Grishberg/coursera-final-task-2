@@ -31,7 +31,7 @@ public class SingleResultCursor<T extends CursorModel<T>> extends BaseResultCurs
             return null;
         }
         if (cursor.moveToFirst()) {
-            getValueFromCursor();
+            return getValueFromCursor();
         }
         return null;
     }
@@ -43,7 +43,7 @@ public class SingleResultCursor<T extends CursorModel<T>> extends BaseResultCurs
     private T getValueFromCursor() {
         try {
             T result = clazz.newInstance();
-            return result.ftomCursor(cursor);
+            return result.getFromCursor(cursor);
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }

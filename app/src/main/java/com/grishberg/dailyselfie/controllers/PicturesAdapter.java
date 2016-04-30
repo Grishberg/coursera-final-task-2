@@ -20,6 +20,7 @@ import com.grishberg.dailyselfie.common.db.ListResult;
 import com.grishberg.dailyselfie.data.files.PictureManager;
 import com.grishberg.dailyselfie.data.model.Pictures;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -31,6 +32,7 @@ public class PicturesAdapter extends BaseRecyclerAdapter<Pictures, PicturesAdapt
     private final OnItemClickListener listener;
     private final PictureManager pictureManager;
     private int lastPosition;
+    private final static SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH.mm.ss",Locale.US);
 
     public PicturesAdapter(@NonNull Context context,
                            @NonNull ListResult<Pictures> listResult,
@@ -52,8 +54,12 @@ public class PicturesAdapter extends BaseRecyclerAdapter<Pictures, PicturesAdapt
     @Override
     public void onBindViewHolder(PictureViewHolder holder, int position) {
         Pictures item = getItem(position);
+        if(item == null){
+            Log.e(TAG, "onBindViewHolder: item == null");
+            return;
+        }
 
-        holder.tvDate.setText(String.format(Locale.US, "dd.MM.yyyy HH.mm.ss",new Date(item.getLastupdate())));
+        holder.tvDate.setText(sdf.format(new Date(item.getLastupdate())));
         holder.id = item.getId();
         holder.path = item.getPath();
         loadPicture(holder);
@@ -67,8 +73,8 @@ public class PicturesAdapter extends BaseRecyclerAdapter<Pictures, PicturesAdapt
             @Override
             public void onCompleted(Bitmap bitmap, String path) {
                 if(holder.path.equals(path)){
+                    Log.d(TAG, "onCompleted: bitmap loaded, path =" +path);
                     holder.ivPreviewIcon.setImageBitmap(bitmap);
-                    //TODO start animation
                 }
             }
 

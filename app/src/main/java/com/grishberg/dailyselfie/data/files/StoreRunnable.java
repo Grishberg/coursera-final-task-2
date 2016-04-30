@@ -27,15 +27,13 @@ public class StoreRunnable extends BaseRunnable {
     public static final String FILES = "files";
     private final PictureManager.StoreCompleteListener listener;
     private final Bitmap bitmap;
-    private final PictureDao pictureDao;
     private final Context context;
 
-    public StoreRunnable(Context context, Handler handler, Bitmap bitmap, PictureDao pictureDao, PictureManager.StoreCompleteListener listener) {
+    public StoreRunnable(Context context, Handler handler, Bitmap bitmap, PictureManager.StoreCompleteListener listener) {
         super(handler);
         this.context = context;
         this.listener = listener;
         this.bitmap = bitmap;
-        this.pictureDao = pictureDao;
     }
 
     @Override
@@ -58,7 +56,6 @@ public class StoreRunnable extends BaseRunnable {
             bitmap.compress(Bitmap.CompressFormat.PNG, 90, fos);
             fos.close();
             if (!thread.isInterrupted()) {
-                pictureDao.storePicture(pictureFile.getAbsolutePath());
                 pictureTask.setPath(pictureFile.getAbsolutePath());
                 pictureTask.setStoreListener(listener);
                 sendMessage(PictureManager.STORE_COMPLETED, pictureTask);

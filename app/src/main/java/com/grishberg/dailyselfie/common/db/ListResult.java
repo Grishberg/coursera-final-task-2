@@ -8,4 +8,5 @@ import com.grishberg.dailyselfie.common.db.BaseResult;
 public interface ListResult<T> extends BaseResult {
     T getItem(int index);
     int getCount();
+    void release();
 }

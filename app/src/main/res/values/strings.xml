@@ -5,4 +5,5 @@
     <string name="selfy_time_content">click me to enter to the app</string>
     <string name="action_take_photo">take photo</string>
     <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_created_at">Created:</string>
 </resources>
