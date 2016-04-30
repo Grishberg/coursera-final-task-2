@@ -1,6 +1,7 @@
 package com.grishberg.dailyselfie.data.files;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.Handler;
@@ -111,6 +112,12 @@ public class StoreRunnable extends BaseRunnable {
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
+                if (context.checkCallingOrSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE")
+                        == PackageManager.PERMISSION_DENIED) {
+                    Log.e(TAG, ">> We don't have permission to write - please add it.");
+                } else {
+                    Log.e(TAG, "We do have permission - the problem lies elsewhere.");
+                }
                 return null;
             }
         }
