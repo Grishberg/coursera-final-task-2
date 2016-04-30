@@ -19,7 +19,6 @@ import com.grishberg.dailyselfie.common.db.ListResult;
 import com.grishberg.dailyselfie.common.interfaces.OnItemClickListener;
 import com.grishberg.dailyselfie.controllers.AlarmHelper;
 import com.grishberg.dailyselfie.controllers.PicturesAdapter;
-import com.grishberg.dailyselfie.data.db.ListResultCursor;
 import com.grishberg.dailyselfie.data.db.dao.PictureDao;
 import com.grishberg.dailyselfie.data.db.dao.PictureDaoCursor;
 import com.grishberg.dailyselfie.data.files.PictureManager;
@@ -86,6 +85,9 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         }
     }
 
+    /**
+     * take picture
+     */
     private void dispatchTakePictureIntent() {
         Log.d(TAG, "dispatchTakePictureIntent: ");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -94,9 +96,16 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         }
     }
 
+    /**
+     * receive result
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Log.d(TAG, "onActivityResult: ");
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             pictureManager.storePicture(App.getAppContext(), imageBitmap, new PictureManager.StoreCompleteListener() {
@@ -113,8 +122,13 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         }
     }
 
+    /**
+     * event when picture-path stored into db
+     * @param id
+     */
     @Override
     public void onDataStored(long id) {
+        Log.d(TAG, "onDataStored: id=" + id);
         adapter.notifyDataSetChanged();
     }
 
