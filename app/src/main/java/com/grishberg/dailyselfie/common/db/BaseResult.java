@@ -7,4 +7,5 @@ public interface BaseResult {
     void addDataReceiveObserver(DataReceiveObserver observer);
     void removeDataReceiveObserver(DataReceiveObserver observer);
     boolean isLoaded();
+    void release();
 }

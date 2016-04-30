@@ -3,12 +3,9 @@ package com.grishberg.dailyselfie.data.db.dao;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-import com.grishberg.dailyselfie.App;
-import com.grishberg.dailyselfie.common.db.DataReceiveObserver;
 import com.grishberg.dailyselfie.common.db.DataStoreObserver;
 import com.grishberg.dailyselfie.common.db.SingleResult;
 import com.grishberg.dailyselfie.data.db.AppContentProvider;
@@ -73,7 +70,7 @@ public class PictureDaoCursor implements PictureDao {
                 null,
                 null,
                 null,
-                null);
+                DbHelper.PICTURES_LAST_UPDATE+" DESC ");
     }
 
     @Override
@@ -81,7 +78,7 @@ public class PictureDaoCursor implements PictureDao {
         return new SingleResultCursor<>(context, Pictures.class,
                 AppContentProvider.CONTENT_URI_PICTURES,
                 null,
-                "id = ?",
+                String.format("%s = ?", DbHelper.COLUMN_ID),
                 new String[]{String.format(Locale.US, "%d", id)},
                 null);
     }

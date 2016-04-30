@@ -69,12 +69,17 @@ public class PicturesAdapter extends BaseRecyclerAdapter<Pictures, PicturesAdapt
     }
 
     private void loadPicture(final PictureViewHolder holder) {
+        holder.ivPreviewIcon.setVisibility(View.INVISIBLE);
         pictureManager.loadPicture(holder.path, new PictureManager.DecodeCompleteListener() {
             @Override
             public void onCompleted(Bitmap bitmap, String path) {
                 if(holder.path.equals(path)){
                     Log.d(TAG, "onCompleted: bitmap loaded, path =" +path);
                     holder.ivPreviewIcon.setImageBitmap(bitmap);
+                    holder.ivPreviewIcon.setVisibility(View.VISIBLE);
+                    Animation fadeInAnimation = AnimationUtils
+                            .loadAnimation(getContext(), R.anim.fadein);
+                    holder.ivPreviewIcon.startAnimation(fadeInAnimation);
                 }
             }
 
