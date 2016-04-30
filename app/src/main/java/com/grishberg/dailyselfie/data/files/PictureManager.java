@@ -157,11 +157,12 @@ public class PictureManager implements Runnable {
 
     public interface DecodeCompleteListener {
         void onCompleted(Bitmap bitmap, String path);
+        void onFail(String path);
     }
 
     public interface StoreCompleteListener {
         void onCompleted(String path);
 
-        void onFail(String path);
+        void onFail(String errorMessage);
     }
 }

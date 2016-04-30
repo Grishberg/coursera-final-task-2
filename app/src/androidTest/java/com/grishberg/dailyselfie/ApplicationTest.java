@@ -30,6 +30,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     MockContentResolver mockResolver;
     PictureDao pictureDao;
     ContextWithMockContentResolver mockContext;
+    String path;
 
     public ApplicationTest() {
         super(Application.class);
@@ -47,7 +48,6 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         contentProvider.attachInfo(getContext(), providerInfo);
         contentProvider.onCreate();
         pictureDao = new PictureDaoCursor(getContext());
-
     }
 
     public void testStoreTask() throws Exception {
@@ -60,6 +60,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
             @Override
             public void onCompleted(String path) {
                 assertNotNull(path);
+                ApplicationTest.this.path = path;
                 success = true;
                 signal.countDown();
             }
@@ -75,18 +76,51 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         assertTrue("picture was not stored", success);
     }
 
+    public void testReadTask() throws Exception {
+        path = null;
+        testStoreTask();
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        success = false;
+        PictureManager pictureManager = new PictureManager(pictureDao);
+        pictureManager.loadPicture(path, new PictureManager.DecodeCompleteListener() {
+            @Override
+            public void onCompleted(Bitmap bitmap, String path) {
+                Log.d(TAG, "loadPicture onCompleted: " + path);
+                assertNotNull(bitmap);
+                success = bitmap != null;
+                signal.countDown();
+            }
+
+            @Override
+            public void onFail(String message) {
+                Log.e(TAG, "loadPicture onFail: " + message);
+                assertTrue("loadPicture onFail: ", true);
+                signal.countDown();
+            }
+        });
+        signal.await(TIMEOUT, TimeUnit.SECONDS);
+        assertTrue("picture was not loaded", success);
+    }
+
     public static class ContextWithMockContentResolver extends RenamingDelegatingContext {
         private ContentResolver contentResolver;
-        public void setContentResolver(ContentResolver contentResolver){
+
+        public void setContentResolver(ContentResolver contentResolver) {
             this.contentResolver = contentResolver;
         }
+
         public ContextWithMockContentResolver(Context targetContext) {
             super(targetContext, "test");
         }
-        @Override public ContentResolver getContentResolver() {
+
+        @Override
+        public ContentResolver getContentResolver() {
             return contentResolver;
         }
-        @Override public Context getApplicationContext(){
+
+        @Override
+        public Context getApplicationContext() {
             return this;
         } //Added in-case my class called getApplicationContext()
     }

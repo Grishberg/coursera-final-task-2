@@ -71,6 +71,11 @@ public class PicturesAdapter extends BaseRecyclerAdapter<Pictures, PicturesAdapt
                     //TODO start animation
                 }
             }
+
+            @Override
+            public void onFail(String path) {
+                Log.e(TAG, "onFail: path = "+path);
+            }
         });
     }
 
