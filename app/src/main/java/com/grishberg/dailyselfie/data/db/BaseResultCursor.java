@@ -62,6 +62,7 @@ public class BaseResultCursor<T extends CursorModel<T>> implements BaseResult {
 
             @Override
             protected void onPostExecute(Cursor cursor) {
+                closeCursor();
                 BaseResultCursor.this.cursor = cursor;
                 if (cursor != null) {
                     Log.d(TAG, "onPostExecute: data downloaded");
@@ -73,6 +74,20 @@ public class BaseResultCursor<T extends CursorModel<T>> implements BaseResult {
                 }
             }
         }.execute();
+    }
+
+    @Override
+    public void updateData() {
+        doRequest();
+    }
+
+    /**
+     * close cursor
+     */
+    private void closeCursor() {
+        if (BaseResultCursor.this.cursor != null && !BaseResultCursor.this.cursor.isClosed()) {
+            BaseResultCursor.this.cursor.close();
+        }
     }
 
     /**
@@ -101,8 +116,6 @@ public class BaseResultCursor<T extends CursorModel<T>> implements BaseResult {
     }
 
     public void release() {
-        if (cursor != null && !cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor();
     }
 }

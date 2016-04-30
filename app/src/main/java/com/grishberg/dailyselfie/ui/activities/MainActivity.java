@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
     /**
      * receive result
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -124,12 +125,14 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
     /**
      * event when picture-path stored into db
+     *
      * @param id
      */
     @Override
     public void onDataStored(long id) {
         Log.d(TAG, "onDataStored: id=" + id);
-        adapter.notifyDataSetChanged();
+        Log.d(TAG, "onDataStored: " + resultCursor.getCount());
+        resultCursor.updateData();
     }
 
     /**

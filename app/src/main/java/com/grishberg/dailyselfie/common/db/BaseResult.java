@@ -8,4 +8,6 @@ public interface BaseResult {
     void removeDataReceiveObserver(DataReceiveObserver observer);
     boolean isLoaded();
     void release();
+
+    void updateData();
 }
