@@ -67,7 +67,7 @@ public class BaseResultCursor<T extends CursorModel<T>> implements BaseResult {
                 if (cursor != null) {
                     Log.d(TAG, "onPostExecute: data downloaded");
                     isLoaded = true;
-                    // notify recepients
+                    // notify recipients
                     for (DataReceiveObserver observer : observers) {
                         observer.onDataReceived();
                     }
